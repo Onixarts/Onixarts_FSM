@@ -76,7 +76,7 @@ state2.SetTransitions(InsertTransition(state2Transations));
 state3.SetTransitions(InsertTransition(state3Transations));
 ```
 
-The `InsertTransition` macro helps calcluting `Transition` array size, so the `State` class knows how many transitions are defined.
+The `InsertTransition` macro helps calculating `Transition` array size, so the `State` class knows how many transitions are defined.
 
 If You didn't specify callback functions in `State` constructors You can always attach it by calling `SetEnterEventDeleate` and `SetExitEventDelegate` functions:
 
