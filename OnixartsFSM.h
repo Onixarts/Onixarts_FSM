@@ -24,22 +24,20 @@
 #define _OnixartsFSM_h
 
 #include "Arduino.h"
-
-#define BEGIN_STATE(stateClass, transitionsCount, parentClass)\
-					class stateClass : public Onixarts::System::FSM::State{\
-						Onixarts::System::FSM::Transition transitionsTable[transitionsCount];\
-						parentClass* _parent;\
+#define BEGIN_STATE(parentClass, stateClass, transitionsCount)\
+					class stateClass : public Onixarts::Tools::FSM::State{\
+						parentClass& m_parent;\
+						byte idx;\
+						Onixarts::Tools::FSM::Transition transitionsTable[transitionsCount];\
+						parentClass& GetParent() {return m_parent;}\
 						public:\
-						stateClass(parentClass* parent) : _parent(parent) {\
-						SetTransitions( InsertTransition( transitionsTable ) );\
+						stateClass(parentClass* parent) : m_parent(*parent), idx(0) { size = transitionsCount; transitions = transitionsTable; memset(transitionsTable, 0, size*sizeof(Onixarts::Tools::FSM::Transition) ); \
 						
-						
-#define DECLARE_ON_ENTER virtual void OnEnter();
-#define DECLARE_ON_EXIT	virtual void OnExit();
-						
+#define TRANSITION(event, toState)\
+	if(idx < size) \
+	transitionsTable[idx++].Init(event, &(m_parent.toState));\
+
 #define END_STATE(instanceName)	} instanceName;
-#define STATE_TRANSITION(idx, event, toState)\
-	transitions[idx].Init(event, &_parent->toState);\
 
 namespace Onixarts 
 { 
@@ -49,7 +47,6 @@ namespace Onixarts
 		{
 			#define InsertTransition(trans) trans, sizeof(trans)/sizeof(trans[0])
 			class State;
-			//typedef uint8_t FSMEvent;	// event
 			typedef void (*FSMEventDelegate)(void);
 			//-------------------------------------------------------------------------------------------------------------------
 			struct Transition

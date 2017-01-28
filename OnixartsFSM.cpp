@@ -71,7 +71,10 @@ bool State::Notify(byte eventID, State*& nextState )
 {
 	for(uint8_t i = 0; i < size; i++)
 	{
-		if( transitions[i].eventID == eventID )
+		// NULL state breaks the loop
+		if (transitions[i].state == NULL)
+			break;
+		if(transitions[i].eventID == eventID )
 		{
 			nextState = transitions[i].state;
 			return true;
