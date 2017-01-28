@@ -42,12 +42,14 @@ namespace Event
 	const byte Reset = 4;
 }
 
-// declaration of main FSM and few states objects
+// declaration few states objects
 // You can also pass enter and exit callback function in constructor or nothing - then You can add this by calling SetEnterEventDelegate(...) function
-FSM::Machine fsm;
 FSM::State state1(OnState1Entered);
 FSM::State state2(OnState2Entered);
 FSM::State state3(OnState3Entered); 
+
+// declaration of FS Machine with initial state
+FSM::Machine fsm(state1);
 
 // transitions declaration as arrays of Transition structs for each state
 FSM::Transition state1Transations[] = { { Event::Button1Pushed, &state2 } };
@@ -73,8 +75,8 @@ void setup()
 	state2.SetTransitions(InsertTransition(state2Transations));
 	state3.SetTransitions(InsertTransition(state3Transations));
 
-	// set initial state
-	fsm.SetCurrentState(state1);
+	// set initial state if You didn't set it in machine constructor
+	// fsm.SetCurrentState(state1);
 }
 
 void loop()
