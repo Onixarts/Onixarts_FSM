@@ -32,12 +32,13 @@ FSM::Machine fsm;
 FSM::State state1, state2, state3;
 ```
 
-You can also pass to `State` constructor enter and exit callback function delegates like:
+You can also pass to `State` constructor enter and exit callback function delegates and set initial state like:
 
 ```C++
 FSM::State state1(OnState1Entered);
 FSM::State state2(OnState2Entered, OnState2Exit);
 FSM::State state3(NULL, OnState3Exit); 
+FSM::Machine fsm(state1);
 ```
 
 Next, lets define some events that my occure in our system. Events are just a byte number. I've put all events in namespace Event, so I can get it by typing Event::Button1Pushed for example. 
@@ -87,7 +88,7 @@ state2.SetExitEventDelegate(OnState2Exit);
 state3.SetExitEventDelegate(OnState3Exit);
 ```
 
-Last thing that should be done is to set current, initial state in a `setup()` function.
+If You didn't set initial state in constructor You can always do it in `setup()` function by calling `SetCurrentState()`. This function also can be used to force state change. 
 
 ```C++
 fsm.SetCurrentState(state1);

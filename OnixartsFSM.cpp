@@ -8,6 +8,12 @@ Machine::Machine()
 	
 }
 
+Machine::Machine(State& state)
+	: currentState(&state)
+{
+}
+
+
 void Machine::Notify(byte event )
 {
 	if( currentState == NULL )

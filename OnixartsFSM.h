@@ -65,6 +65,7 @@ namespace Onixarts
 					State* currentState;
 				public:
 					Machine();
+					Machine(State& state);
 					void Notify(byte eventID );
 					State* GetCurrentState() { return this->currentState; }
 					void SetCurrentState(State& state); 
