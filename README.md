@@ -1,7 +1,7 @@
-## Onixarts_FSM
+# Onixarts FSM
 Finite State Machine implementation for Arduino. You can define states that Your system or object can be in, and transitions between these states fired by specified events.
 
-### Features
+## Features
 - Unlimited states
 - Up to 256 transitions for each state
 - Enter and Exit events for each state
@@ -9,7 +9,7 @@ Finite State Machine implementation for Arduino. You can define states that Your
 - Can be used internally in class objects
 - No dynamic memory allocation
 
-### Overview
+## Overview
 Library is build with two classes:
 
 `Machine` handles notifications and switching states. 
@@ -19,11 +19,11 @@ Library is build with two classes:
 If machine is currently in `state1` and it has defined transition to `state2` on button 1 push event it will switch from `state1` to `state2` when You Notify `Machine` with `Event::Button1Pressed` event.
 Before switching the Exit event is raised on `state1`. You can attach a callback function for this event. After state beeing switched to `state2` the Enter event is raised in `state2`, which You can also use.
 
-### Why I need this?
+## Why I need this?
 You don't :). But sometimes is much easier to implement complicated system behavior by states and transitions than multiple switch, case and if statements. Here You have code blocks that acts like You defined in 
 transitions. It is very easy to maintain. Just draw Your states, events and transitions on a paper, then translate it to the code.
 
-### Basic usage
+## Basic usage
 First, You need instantiate `Machine` and `State` objects like this:
 
 ```C++
@@ -138,5 +138,73 @@ void OnState3Entered()
 
 Complete code You can find in HelloWorld example folder.
 
-### Advanced usage in class
-TODO
+## Advanced usage in class
+
+As You may know, You can't simply pass object method as callback function, because in compilation time `this` pointer is undefined - so the compiler won't know which object's method should be called. In such cases You are usually define global callback function and then in function body You call myObject1.DoSomething() or declare class method as static - but it has no access to the object's data however.
+
+In Onixarts_FS library You can implement derived states inside Your class. There are some macros defined that will simplify proces to minimum lines od code.
+
+Below is an example of custom class `MyClass` with state definition.
+
+```C++
+class MyClass : public FSM::Machine
+{
+	BEGIN_STATE(MyClass, State2, 2)
+	TRANSITION(Event::Button2Pushed, state3)
+	TRANSITION(Event::Reset, state1)
+	};
+	void OnEnter()
+	{
+		Serial.println("State 1 entered");
+
+		// accessing parent class (MyClass) members
+		// GetParent().DoSomething();
+	}
+	END_STATE(state1) // type the state instance name
+
+public:
+	MyClass()
+		: FSM::Machine() // don't put initial state here, because Start event will be generated for this task before Arduino's setup()
+		, state1(this)
+		//, state2(this)
+		//, state3(this)
+	{};
+
+	void Init()
+	{
+		SetCurrentState(state1);
+	}
+};
+
+```
+
+`MyClass` inherits from `FSM::Machine` so You can directly call `Notify()` method on Your class object. To define new state use `BEGIN_STATE()` macro. First parameter is the parent class name, 
+second is the defined state name (`State1` here), the third one is the number of transitions for this task. You should always put here proper transitions cound number. Lower number
+will cause that some transitions won't be added to task, higher will work, but it will allocate unnecessarily SRAM memory.
+
+After the state definition put state transitions to another states defined in `MyClass`. Simply type `TRANSITION(event, targetTaskName)`. Don't forget to put `};` in the end of transitions (because of the macro structure).
+Notice the lowercase state instances names here, not the state name with Capital letter. 
+
+Next You can define `OnEnter()` and `OnExit()` methods that will be called by Machine when transition occured. You can access parent class methods by calling `GetParent()` method.
+
+Another thing You should do is to call constructors for each defined state in parent class constructor initialization list. 
+
+Because it is very common scenario that `MyClass` object will be declared in global space in ino file You can't acctualy know when exactly this constructor will be called. It will be called before `setup()` function, where 
+for example You can't use `Serial` output. So instead of passing initial state to the `FSM::Machine` constructor, call `SetCurrentState()` in `Init()` method of the `MyClass` object, from the `setup()`.
+After calling this function `OnEnter()` method will be called on initial state.
+
+
+```C++
+MyClass myClass;
+
+void setup()
+{
+	Serial.begin(115200);
+	Serial.println("Onixarts FSM class demo");
+
+    // this function should set initial state in the class.
+	myClass.Init();
+}
+```
+
+Complete code You can find in HelloWorldClass example. It does the same thing that HelloWorld do, but using class.
