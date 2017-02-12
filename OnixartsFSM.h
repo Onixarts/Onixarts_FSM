@@ -47,7 +47,7 @@ namespace Onixarts
 		{
 			#define InsertTransition(trans) trans, sizeof(trans)/sizeof(trans[0])
 			class State;
-			typedef void (*FSMEventDelegate)(void);
+			typedef void (*FSMEventDelegate)(byte eventID);
 			//-------------------------------------------------------------------------------------------------------------------
 			struct Transition
 			{
@@ -78,8 +78,8 @@ namespace Onixarts
 					FSMEventDelegate m_enterDelegate;	// pointer to enter state callback
 					FSMEventDelegate m_exitDelegate;	// pointer to exit state callback
 
-					virtual void OnEnter() {};
-					virtual void OnExit() {};
+					virtual void OnEnter(byte eventID) {};
+					virtual void OnExit(byte eventID) {};
 
 				public:
 					State();
@@ -91,8 +91,8 @@ namespace Onixarts
 					void SetEnterEventDelegate(FSMEventDelegate fsmDelegate) { m_enterDelegate = fsmDelegate; }
 					void SetExitEventDelegate(FSMEventDelegate fsmDelegate) { m_exitDelegate = fsmDelegate; }
 					
-					void Enter();
-					void Exit();
+					void Enter(byte eventID = 0);
+					void Exit(byte eventID = 0);
 			};
 		}
 	}

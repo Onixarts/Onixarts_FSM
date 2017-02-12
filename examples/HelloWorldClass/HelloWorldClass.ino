@@ -53,7 +53,7 @@ class MyClass : public FSM::Machine
 	BEGIN_STATE(MyClass, State1, 1)
 	TRANSITION(Event::Button1Pushed, state2)
 	};
-	void OnEnter()
+	void OnEnter(byte event)
 	{
 		// put Your Enter event code here
 		Serial.println("State 1 entered");
@@ -67,7 +67,7 @@ class MyClass : public FSM::Machine
 	TRANSITION(Event::Button2Pushed, state3)
 	TRANSITION(Event::Reset, state1)
 	};
-	void OnEnter()
+	void OnEnter(byte event)
 	{
 		Serial.println("State 2 entered");
 	}
@@ -77,7 +77,7 @@ class MyClass : public FSM::Machine
 	TRANSITION(Event::Button3Pushed, state1)
 	TRANSITION(Event::Reset, state1)
 	};
-	void OnEnter()
+	void OnEnter(byte event)
 	{
 		Serial.println("State 3 entered");
 	}

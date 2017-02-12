@@ -94,19 +94,19 @@ void loop()
 }
 
 // Callback function called when FSM enters state 1
-void OnState1Entered()
+void OnState1Entered(byte event)
 {
 	Serial.println("State 1 entered");
 }
 
 // Callback function called when FSM enters state 2
-void OnState2Entered()
+void OnState2Entered(byte event)
 {
 	Serial.println("State 2 entered");
 }
 
 // Callback function called when FSM enters state 3
-void OnState3Entered()
+void OnState3Entered(byte event)
 {
 	Serial.println("State 3 entered");
 }

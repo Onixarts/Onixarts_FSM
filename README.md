@@ -114,23 +114,24 @@ void loop()
 ```
 
 If any of three buttons is pressed we send event notification to `Machine` object. If there is a `Transition` defined for specified event in current machine state it will fire the transition.
-Firing transition will also raise Exit and Enter events in current and target state, so we can simply react on this changes.
+Firing transition will also raise Exit and Enter events in current and target state, so we can simply react on this changes. There is also event parameter passed to the callback function in 
+case we may wan't to know what cause the state change.
 
 ```C++
 // Callback function called when FSM enters state 1
-void OnState1Entered()
+void OnState1Entered(byte event)
 {
 	Serial.println("State 1 entered");
 }
 
 // Callback function called when FSM enters state 2
-void OnState2Entered()
+void OnState2Entered(byte event)
 {
 	Serial.println("State 2 entered");
 }
 
 // Callback function called when FSM enters state 3
-void OnState3Entered()
+void OnState3Entered(byte event)
 {
 	Serial.println("State 3 entered");
 }
@@ -153,7 +154,7 @@ class MyClass : public FSM::Machine
 	TRANSITION(Event::Button2Pushed, state3)
 	TRANSITION(Event::Reset, state1)
 	};
-	void OnEnter()
+	void OnEnter(byte event)
 	{
 		Serial.println("State 1 entered");
 

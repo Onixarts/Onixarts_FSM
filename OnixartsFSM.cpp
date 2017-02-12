@@ -22,10 +22,10 @@ void Machine::Notify(byte event )
 	State* nextState = NULL;
 	if( currentState->Notify( event, nextState ) )
 	{
-		currentState->Exit();
+		currentState->Exit(event);
 		this->currentState = nextState;
 		if( currentState != NULL )
-			currentState->Enter();
+			currentState->Enter(event);
 	}
 }
 
@@ -84,16 +84,16 @@ bool State::Notify(byte eventID, State*& nextState )
 	return false;
 }
 
-void State::Enter()
+void State::Enter(byte eventID)
 {
-	OnEnter();
+	OnEnter(eventID);
 	if (m_enterDelegate != NULL)
-		m_enterDelegate();
+		m_enterDelegate(eventID);
 }
 
-void State::Exit()
+void State::Exit(byte eventID)
 {
-	OnExit();
+	OnExit(eventID);
 	if (m_exitDelegate != NULL)
-		m_exitDelegate();
+		m_exitDelegate(eventID);
 }
