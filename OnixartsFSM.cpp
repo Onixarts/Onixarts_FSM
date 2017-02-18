@@ -40,11 +40,14 @@ void Machine::SetCurrentState(State& state)
 State::State()
 : transitions( NULL )
 , size(0)
+#ifndef OA_NO_CALLBACKS
 , m_enterDelegate(NULL)
 , m_exitDelegate(NULL)
+#endif
 {
 }
 
+#ifndef OA_NO_CALLBACKS
 State::State(FSMEventDelegate enterDelegate)
 : transitions(NULL)
 , size(0)
@@ -60,6 +63,7 @@ State::State(FSMEventDelegate enterDelegate, FSMEventDelegate exitDelegate)
 , m_exitDelegate(exitDelegate)
 {
 }
+#endif
 
 void State::SetTransitions( Transition* transitions, byte size )
 {
@@ -87,13 +91,17 @@ bool State::Notify(byte eventID, State*& nextState )
 void State::Enter(byte eventID)
 {
 	OnEnter(eventID);
+#ifndef OA_NO_CALLBACKS
 	if (m_enterDelegate != NULL)
 		m_enterDelegate(eventID);
+#endif
 }
 
 void State::Exit(byte eventID)
 {
 	OnExit(eventID);
+#ifndef OA_NO_CALLBACKS
 	if (m_exitDelegate != NULL)
 		m_exitDelegate(eventID);
+#endif
 }

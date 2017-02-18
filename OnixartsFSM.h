@@ -1,6 +1,9 @@
 // Onixarts_FSM is a Finite State Machine implementation library for Arduino.
 // FSM helps with state based system implementation.
 // 
+// Define OA_NO_CALLBACKS preprocesor symbol to compile library without callback function support (reducing SRAM usage)
+// when using as class member
+//
 // Github: https://github.com/Onixarts/Onixarts_FSM
 // Author's site: http://onixarts.pl
 // Contact: software@onixarts.pl
@@ -74,22 +77,25 @@ namespace Onixarts
 				protected:
 					Transition* transitions;
 					uint8_t size;
-					
+#ifndef OA_NO_CALLBACKS					
 					FSMEventDelegate m_enterDelegate;	// pointer to enter state callback
 					FSMEventDelegate m_exitDelegate;	// pointer to exit state callback
+#endif
 
 					virtual void OnEnter(byte eventID) {};
 					virtual void OnExit(byte eventID) {};
 
 				public:
 					State();
+#ifndef OA_NO_CALLBACKS
 					State(FSMEventDelegate enterDelegate);
 					State(FSMEventDelegate enterDelegate, FSMEventDelegate exitDelegate);
-					bool Notify(byte eventID,  State*& nextState ); // returns true if there was a transformation. nextState is set to state from transitions array, or to this if event not found.
-					void SetTransitions(Transition* transitions, byte size);
-					
+
 					void SetEnterEventDelegate(FSMEventDelegate fsmDelegate) { m_enterDelegate = fsmDelegate; }
 					void SetExitEventDelegate(FSMEventDelegate fsmDelegate) { m_exitDelegate = fsmDelegate; }
+#endif
+					bool Notify(byte eventID,  State*& nextState ); // returns true if there was a transformation. nextState is set to state from transitions array, or to this if event not found.
+					void SetTransitions(Transition* transitions, byte size);
 					
 					void Enter(byte eventID = 0);
 					void Exit(byte eventID = 0);
